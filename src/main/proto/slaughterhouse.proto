@@ -1,0 +1,104 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "via.sdj3.ass2.grpc.generated";
+package via.sdj3.ass2.grpc.generated;
+import "google/protobuf/timestamp.proto";
+
+message RegisterAnimalRequest {
+  string animalType = 1;
+  double weight = 2;
+  string farm = 3;
+}
+
+message AnimalIdRequest {
+  int32 animalId = 1;
+}
+
+message ProductIdRequest {
+  int32 productId = 1;
+}
+
+message DateRequest {
+  int32 day = 1;
+  int32 month = 2;
+  int32 year = 3;
+}
+
+message FarmStringRequest {
+  string farm = 1;
+}
+
+message HalfAnimalProductRequest {
+  string animalType = 1;
+}
+
+message SamePartProductRequest {
+  string animalType = 1;
+  string partType = 2;
+}
+
+
+message AnimalResponse {
+  int32 regNum = 1;
+  string animalType = 2;
+  google.protobuf.Timestamp dateTime = 3;
+  string farm = 4;
+  double weight = 5;
+}
+
+message PartResponse {
+  int32 partId = 1;
+  AnimalResponse ogAnimal = 2;
+  string partType = 3;
+  double weight = 4;
+}
+
+message TrayResponse {
+  int32 trayId = 1;
+  double maxWeight = 2;
+  string animalType = 3;
+  string partType = 4;
+  repeated PartResponse parts = 5;
+}
+
+message ProductResponse {
+  int32 productId = 1;
+  repeated PartResponse parts = 2;
+  repeated TrayResponse trays = 3;
+  string productType = 4;
+}
+
+message PartListResponse {
+  repeated PartResponse parts = 1;
+}
+
+message AnimalListResponse {
+  repeated AnimalResponse animals = 1;
+}
+
+message ProductListResponse {
+  repeated ProductResponse products = 1;
+}
+
+message Nothing {
+  string doesntMatter = 1;
+}
+
+service AnimalService {
+  rpc createAnimal(RegisterAnimalRequest) returns (AnimalResponse);
+  rpc getAllAnimals(Nothing) returns (AnimalListResponse);
+  rpc getAnimalById(AnimalIdRequest) returns (AnimalResponse);
+  rpc getAnimalsByDate(DateRequest) returns (AnimalListResponse);
+  rpc getAnimalsByFarm(FarmStringRequest) returns (AnimalListResponse);
+}
+
+service PartService {
+  rpc cutAnimal(AnimalIdRequest) returns (PartListResponse);
+}
+
+service ProductService {
+  rpc makeHalfAnimalProduct(HalfAnimalProductRequest) returns (ProductResponse);
+  rpc makeSamePartTypeProduct(SamePartProductRequest) returns (ProductResponse);
+  rpc getProductsIncludingAnimalRegId(AnimalIdRequest) returns (ProductListResponse);
+  rpc getAllAnimalsInAProduct(ProductIdRequest) returns (AnimalListResponse);
+}
